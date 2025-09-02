@@ -48,13 +48,13 @@ router.post("/signup", async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName
     })
-    const userId = user._id ;
-    
+    const userId = user._id;
+
     await Account.create({
-        userId , balance: 1 + Math.random()*10000
+        userId, balance: 1 + Math.random() * 10000
     })
 
-    
+
     const token = jwt.sign({
         userId
     }, JWT_SECRET);
@@ -79,7 +79,7 @@ router.post("/signin", async (req, res) => {
 
     if (user) {
         const token = jwt.sign({
-            userid: user._id
+            userId: user._id
         }, JWT_SECRET);
 
         res.json({
@@ -100,11 +100,21 @@ router.put("/", authMiddlware, async (req, res) => {
             messsage: "Error while updating information"
         })
     }
+    console.log("Credentials are valid")
+    try {
+        await User.updateOne({ userId: req.userId }, req.body)
 
-    await User.updateOne({ _id: req.userId }, req.body)
-    res.json({
+    } catch (err) {
+        console.log(`Error is : ${err}\n`)
+        return res.status(403).json({
+            message: "Unable to update"
+        })
+    }
+
+    return res.json({
         message: "Updated Successfully"
     })
+
 })
 
 // very imp

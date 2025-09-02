@@ -1,12 +1,22 @@
 const express = require('express');
 const { authMiddlware } = require('../middleware');
 const { Account } = require('../db');
+const mongoose = require("mongoose");
+
 
 const router = express.Router();
+
 router.get("/balance", authMiddlware, async (req, res) => {
+    console.log("req.userId =", req.userId);
     const account = await Account.findOne({
         userId: req.userId
     });
+
+    if (!account) {
+        return res.status(404).json({
+            message: "user not found"
+        })
+    }
     return res.status(200).json({
         balance: account.balance
     })
@@ -32,7 +42,7 @@ router.post("/transfer", authMiddlware, async (req, res) => {
     const toAccount = await Account.findOne({
         userId: to
     }).session(session);
-    
+
     if (!toAccount) {
         await session.abortTransaction();
         res.status(400).json({

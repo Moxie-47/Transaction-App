@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
+const mongoose = require("mongoose");
 // const {Schema, model} = mongoose;
 
 mongoose.connect('mongodb://localhost:27017/transactionApp');
